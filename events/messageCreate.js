@@ -5,7 +5,7 @@ module.exports = {
         if(message.author.bot) return
 
         const prefix = '.'
-        if(message.content.replace('!','') === `<@${client.user.id}>`) return message.reply(`😁 Olá ${message.author}, sou um simples bot do discord.`)
+        if(message.content.replace('!','') === `<@${client.user.id}>`) return message.reply(`Eae ${message.author}, Como vai a vida?`)
 
         if(!message.content.startsWith(prefix)) return
         const args = message.content.slice(prefix.length).trim().split(' ')
