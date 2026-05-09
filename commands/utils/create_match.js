@@ -9,16 +9,16 @@ module.exports = {
     if (!matchType) return message.reply(`:x: | Informe o tipo de partida`);
     
     const embed = new EmbedBuilder()
-      .setTitle(`:fire: | ${args.join(" ")}`)
+      .setTitle(`🧧・ ${args.join(" ")}`)
       .addFields([
         {
-          name: "<:gelo:1467622151732465816> | Fila Gelo Normal", value: "Ninguem"
+          name: "<:gelo:1502756772497330236> | Fila Gelo Normal", value: "Ninguém"
         }, {
-          name: "<:gelo:1467622151732465816> | Fila Gelo Infinito", value: "Ninguem"
+          name: "<:gelo:1502756772497330236> | Fila Gelo Infinito", value: "Ninguém"
         }
       ])
       .setFooter({ text: `${message.guild.name} - 2026`, iconURL: message.guild.iconURL() })
-      .setColor("Blue")
+      .setColor("Gray")
       
     const gelNormalButton = new ButtonBuilder()
       .setLabel("Gelo Normal")
