@@ -37,7 +37,7 @@ module.exports = {
 
       const row = new ActionRowBuilder().addComponents(closeBtn);
 
-      await channel.send({ content: `${interaction.user} | <@1502667024558588052>`, embeds: [embed], components: [row] });
+      await channel.send({ content: `${interaction.user} | <@&1502667024558588052>`, embeds: [embed], components: [row] });
 
       return interaction.editReply({ content: `Seu ticket foi criado: ${channel}` });
     }
