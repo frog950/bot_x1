@@ -18,7 +18,7 @@ module.exports = {
         }
       ])
       .setFooter({ text: `${message.guild.name} - 2026`, iconURL: message.guild.iconURL() })
-      .setColor("Gray")
+      .setColor("Blue")
       
     const gelNormalButton = new ButtonBuilder()
       .setLabel("Gelo Normal")
