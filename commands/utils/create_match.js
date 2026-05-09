@@ -12,9 +12,9 @@ module.exports = {
       .setTitle(`🧧・ ${args.join(" ")}`)
       .addFields([
         {
-          name: "<:gelo:1502756772497330236> | Fila Gelo Normal", value: "Ninguém"
+          name: "<:gelo:1502756772497330236> | Fila Gelo Normal", value: "Ninguem"
         }, {
-          name: "<:gelo:1502756772497330236> | Fila Gelo Infinito", value: "Ninguém"
+          name: "<:gelo:1502756772497330236> | Fila Gelo Infinito", value: "Ninguem"
         }
       ])
       .setFooter({ text: `${message.guild.name} - 2026`, iconURL: message.guild.iconURL() })
