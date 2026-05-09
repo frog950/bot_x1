@@ -61,12 +61,12 @@ module.exports = {
       });
       
       const embed = new EmbedBuilder()
-        .setTitle(`:fire: Match!`)
-        .setDescription(`> Combinem as informacões do x1 e cliquem no botão quando encerrarem!`)
+        .setTitle(`🧧 Match!`)
+        .setDescription(`>  Você entrou na fila com sucesso! \nConfirme com seu oponente se esta tudo pronto.`)
         .setColor("Yellow")
         
       const button = new ButtonBuilder()
-        .setLabel("Finalizar")
+        .setLabel("Confirmar")
         .setCustomId("endmatch")
         .setStyle(ButtonStyle.Danger)
       
