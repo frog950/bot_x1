@@ -1,87 +1,54 @@
-const client = require("../index")
-const { EmbedBuilder, ChannelType, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js")
+const { EmbedBuilder, ChannelType, ButtonBuilder, ButtonStyle, ActionRowBuilder, PermissionFlagsBits } = require("discord.js");
+
 module.exports = {
   name: "interactionCreate",
   run: async (interaction) => {
-    
-    const updateEmbed = () => {
-      const data = client.database.get(`match_${interaction.message.id}`);
-      
-      const titleEmbed = interaction.message.embeds[0]?.data?.title
-      const embed = new EmbedBuilder()
-      .setTitle(titleEmbed)
-      .addFields([
-        {
-          name: "<:gelo:1467622151732465816> | Fila Gelo Normal", value: data?.gelnormal?.length > 0 ? data?.gelnormal?.map(x => `<@${x}>`).join(", ") : "Ninguem"
-        }, {
-          name: "<:gelo:1467622151732465816> | Fila Gelo Infinito", value: data?.gelinfinito?.length > 0 ? data?.gelinfinito?.map(x => `<@${x}>`).join(", ") : "Ninguem"
-        }
-      ])
-      .setFooter({ text: `${interaction.guild.name} - 2026`, iconURL: interaction.guild.iconURL() })
-      .setColor("Blue")
-      
-      interaction.message.edit({ embeds: [embed] })
-    }
-    
-    
     if (!interaction.isButton()) return;
-    
-    if (interaction.customId === "endmatch") {
-      interaction.deferUpdate()
-      interaction.channel.send("Canal sendo encerrado em 10 segundos...")
-      setTimeout(() => {
-        interaction.channel.delete().catch(err => {})
-      }, 10000)
-    }
-    if (interaction.customId !== "gelnormal" && interaction.customId !== "gelinfinito") return;
-    await interaction.deferReply({ flags: ["Ephemeral"]})
-    const matchData = client.database.get(`match_${interaction.message.id}`);
-    if (!matchData) return interaction.editReply({
-      content: ":x: Não foi possivel identificar essa fila! Contate um administrador", flags: ["Ephemeral"]
-    });
-    
-    const other = interaction.customId === "gelinfinito" ? "gelnormal" : "gelinfinito";
-    const otherQueue = matchData[other];
-    if (otherQueue?.includes(interaction.user.id)) {
-      client.database.set(`match_${interaction.message.id}.${other}`, [])
-    }
-    if (matchData[interaction.customId]?.includes(interaction.user.id)) {
-      client.database.set(`match_${interaction.message.id}.${interaction.customId}`, [])
-      updateEmbed()
-      return interaction.editReply({
-        content: "> Você saiu da fila!", flags: ["Ephemeral"]
-      })
-    }
-    
-    
-    if (matchData[interaction.customId]?.length === 1 && matchData[interaction.customId][0] !== interaction.user.id) {
-      const thread = await interaction.channel.threads.create({
-        name: `partida_${interaction.user.username}`,
-        type: ChannelType.PrivateThread
+
+    // --- LÓGICA DE ABRIR TICKET ---
+    if (interaction.customId === "open_ticket") {
+      await interaction.deferReply({ flags: ["Ephemeral"] });
+
+      // Verifica se já existe um canal para esse usuário
+      const existingChannel = interaction.guild.channels.cache.find(c => c.name === `ticket-${interaction.user.username}`);
+      if (existingChannel) {
+        return interaction.editReply({ content: `Você já possui um ticket aberto em ${existingChannel}` });
+      }
+
+      // Criação do Canal de Ticket
+      const channel = await interaction.guild.channels.create({
+        name: `ticket-${interaction.user.username}`,
+        type: ChannelType.GuildText,
+        permissionOverwrites: [
+          { id: interaction.guild.id, deny: [PermissionFlagsBits.ViewChannel] }, // Esconde de todos
+          { id: interaction.user.id, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages] }, // Mostra ao usuário
+        ],
       });
-      
+
       const embed = new EmbedBuilder()
-        .setTitle(`🧧 Match!`)
-        .setDescription(`>  Você entrou na fila com sucesso! \nConfirme com seu oponente se esta tudo pronto.`)
-        .setColor("Yellow")
-        
-      const button = new ButtonBuilder()
-        .setLabel("Confirmar")
-        .setCustomId("endmatch")
-        .setStyle(ButtonStyle.Danger)
+        .setTitle("🛠️ Suporte Solicitado")
+        .setDescription(`Olá ${interaction.user}, relate seu problema e aguarde a equipe.\nPara fechar este ticket, use o botão abaixo.`)
+        .setColor("Blue");
+
+      const closeBtn = new ButtonBuilder()
+        .setLabel("Fechar Ticket")
+        .setCustomId("close_ticket")
+        .setStyle(ButtonStyle.Danger);
+
+      const row = new ActionRowBuilder().addComponents(closeBtn);
+
+      await channel.send({ content: `${interaction.user} | <@1502667024558588052>`, embeds: [embed], components: [row] });
+
+      return interaction.editReply({ content: `Seu ticket foi criado: ${channel}` });
+    }
+
+    // --- LÓGICA DE FECHAR TICKET ---
+    if (interaction.customId === "close_ticket") {
+      await interaction.reply("🔒 Este ticket será fechado em 5 segundos...");
       
-      const row = new ActionRowBuilder().addComponents(button);
-      
-      thread.send({
-        content: `${interaction.user}, <@${matchData[interaction.customId][0]}>`, embeds: [embed], components: [row]
-      })
-      client.database.set(`match_${interaction.message.id}`, {})
-      interaction.editReply({ content: "Match!"})
-      updateEmbed()
-    } else {
-      client.database.push(`match_${interaction.message.id}.${interaction.customId}`, interaction.user.id);
-      updateEmbed()
-      return interaction.editReply({ content: `> Você entrou na fila`, flags: ["Ephemeral"] })
+      setTimeout(() => {
+        interaction.channel.delete().catch(() => {});
+      }, 5000);
     }
   }
-}
+};
