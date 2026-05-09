@@ -10,7 +10,8 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setTitle("🎫 Central de Suporte")
-      .setDescription("Precisa de ajuda? Clique no botão abaixo para abrir um ticket de atendimento.")
+      .setDescription("> 🏷 **Abra um ticket apenas se for necessário!**
+> ❓ **Dúvidas, Compras ou qualquer outro assunto** que precise de ajuda, estamos aqui para isso.")
       .setFooter({ text: `${message.guild.name} - 2026`, iconURL: message.guild.iconURL() })
       .setColor("Green");
 
